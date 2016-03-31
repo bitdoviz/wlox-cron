@@ -138,6 +138,12 @@ foreach ($wallets as $wallet) {
 							echo 'Error: Could not delete transaction file.'.PHP_EOL;
 						else
 							echo $CFG->currencies[$wallet['c_currency']]['currency'].' transaction credited successfully.'.PHP_EOL;
+						
+						$invoice_info = DB::getRecord('invoices',0,$addresses[$detail['address']]['invoice_id'],false,'invoice_id');
+						if ($invoice_info['currency'] && $wallet['c_currency'] != $invoice_info['currency'] && $invoice_info['auto_conversion'] == 'Y')
+							$order = Orders::executeOrder(false,false,$detail['amount'],$wallet['c_currency'],$invoice_info['currency'],false,true,false,$invoice_info['merchant'],false,false,false,true,false,$addresses[$detail['address']]['invoice_id']);
+						else
+							db_update('invoices',$invoice_info['id'],array('amount_received'=>number_format(($invoice_info['amount_received'] + $detail['amount']),8,'.','')));
 					}
 				}
 			}

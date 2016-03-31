@@ -36,6 +36,7 @@ $CFG->currency_conversion_fee = $CFG->currency_conversion_fee * 0.01;
 $CFG->form_email = $CFG->support_email;
 $CFG->request_widthdrawal_id = $CFG->request_withdrawal_id;
 $CFG->bitcoin_reserve_ratio = $CFG->bitcoin_reserve_ratio * 0.01;
+$CFG->merchant_commision = $CFG->merchant_commision * 0.01;
 
 
 /* Wait for other cron jobs and create lock file when ready */

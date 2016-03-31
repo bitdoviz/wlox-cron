@@ -249,6 +249,23 @@ if ((date('H') == 7 || date('H') == 16) && (date('i') >= 0 && date('i') < 5)) {
 	db_query($sql);
 }
 
+// check invoices
+$sql = 'SELECT fiat,currency,invoice_id FROM transactions WHERE invoice_id > 0 AND invoice_factored != "Y"';
+$result = db_query_array($sql);
+if ($result) {
+	foreach ($result as $row) {
+		$invoice = DB::getRecord('invoices',$row['invoice_id'],false,true);
+		if (!$invoice)
+			continue;
+		
+		db_update('invoices',$invoice['id'],array('amount_received'=>($invoice['amount_received'] + $row['fiat'])));
+	}
+	
+	$sql = 'UPDATE transactions SET invoice_factored = "Y" WHERE factored != "Y"';
+	db_query($sql);
+}
+
+
 db_update('status',1,array('cron_maintenance'=>date('Y-m-d H:i:s')));
 
 echo 'done'.PHP_EOL;
